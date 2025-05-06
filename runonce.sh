@@ -1,5 +1,5 @@
 #!/bin/bash -x
-set -e -o pipefail 
+
 # attach the ENI
 end_time=$((SECONDS + 180))
 while [ $SECONDS -lt $end_time ] && ! ip link show dev eth1; do
@@ -8,7 +8,7 @@ while [ $SECONDS -lt $end_time ] && ! ip link show dev eth1; do
     --instance-id "$(/opt/aws/bin/ec2-metadata -i | cut -d' ' -f2)" \
     --device-index 1 \
     --network-interface-id "${eni_id}"
-    sleep 1
+    sleep 5
 done
 
 # start SNAT
