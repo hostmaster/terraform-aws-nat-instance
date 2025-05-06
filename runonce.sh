@@ -1,4 +1,11 @@
 #!/bin/bash -x
+set -e -o pipefail
+
+# Check required environment variables
+if [ -z "${eni_id:-}" ]; then
+    echo "Error: eni_id environment variable is not set"
+    exit 1
+fi
 
 # attach the ENI
 end_time=$((SECONDS + 180))
