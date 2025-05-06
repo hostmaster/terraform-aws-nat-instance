@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+set -x -e
 
 # wait for eth1
 end_time=$((SECONDS + 180))
