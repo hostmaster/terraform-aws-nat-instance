@@ -1,12 +1,5 @@
 #!/bin/bash -x
-set -e -o pipefail
-
-# Check required environment variables
-if [ -z "${eni_id:-}" ]; then
-    echo "Error: eni_id environment variable is not set"
-    exit 1
-fi
-
+set -e -o pipefail 
 # attach the ENI
 end_time=$((SECONDS + 180))
 while [ $SECONDS -lt $end_time ] && ! ip link show dev eth1; do
