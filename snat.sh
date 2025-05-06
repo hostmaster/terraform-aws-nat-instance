@@ -21,9 +21,13 @@ rm -f /etc/sysconfig/network-scripts/ifcfg-eth0
 
 # switch the default route to eth1
 ip route del default dev eth0
+ip route
 
 # wait for network connection
-curl --retry 10 http://www.example.com
+curl --retry 10 --retry-delay 5 --connect-timeout 10 --max-time 60 http://www.example.com
+if [ $? -ne 0 ]; then
+  echo "curl exited with an error"
+fi
 
 # reestablish connections
 systemctl restart amazon-ssm-agent.service
