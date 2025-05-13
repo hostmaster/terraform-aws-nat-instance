@@ -14,20 +14,28 @@ fi
 # enable IP forwarding and NAT
 sysctl -q -w net.ipv4.ip_forward=1
 sysctl -q -w net.ipv4.conf.eth1.send_redirects=0
+sysctl -q -w net.ipv4.conf.eth1.rp_filter=0
+sysctl -q -w net.ipv4.conf.all.rp_filter=0
+
+iptables -A PREROUTING -t mangle -i eth1 -j MARK --set-mark 1
 iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
 
-# prevent setting the default route to eth0 after reboot
-rm -f /etc/sysconfig/network-scripts/ifcfg-eth0
+echo "from all fwmark 1 lookup nat" >> /etc/sysconfig/network-scripts/rule-eth1
 
+echo "100 nat" >>/etc/iproute2/rt_tables
+GW=$(ip route show 0.0.0.0/0 dev eth1 | cut -d\  -f3)
+ip route add default via $GW dev eth1 table nat
+ip rule add fwmark 1 lookup nat
+ip route flush cache
 # switch the default route to eth1
-ip route del default dev eth0
-ip route
+#ip route del default dev eth0
+#ip route
 
 # wait for network connection
-curl --retry 10 --retry-delay 5 --connect-timeout 10 --max-time 60 http://www.example.com
-if [ $? -ne 0 ]; then
-  echo "curl exited with an error"
-fi
+#curl --retry 10 --retry-delay 5 --connect-timeout 10 --max-time 60 http://www.example.com
+#if [ $? -ne 0 ]; then
+#  echo "curl exited with an error"
+#fi
 
 # reestablish connections
-systemctl restart amazon-ssm-agent.service
+# systemctl restart amazon-ssm-agent.service
