@@ -7,8 +7,6 @@ Description = SNAT via ENI eth1
 Type = oneshot
 RemainAfterExit = yes
 ExecStart = /opt/nat/snat.sh
-Restart = on-failure
-RestartSec = 10
 StandardOutput = kmsg+console
 
 [Install]
