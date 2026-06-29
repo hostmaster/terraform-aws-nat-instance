@@ -1,10 +1,14 @@
 [Unit]
-After=ec2net-ifup@eth1.service
+After=ec2net-ifup@eth1.service network-online.target
+Wants=network-online.target
 Description = SNAT via ENI eth1
 
 [Service]
-ExecStart = /opt/nat/snat.sh
 Type = oneshot
+RemainAfterExit = yes
+ExecStart = /opt/nat/snat.sh
+Restart = on-failure
+RestartSec = 10
 StandardOutput = kmsg+console
 
 [Install]
